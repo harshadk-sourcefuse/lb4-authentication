@@ -23,6 +23,7 @@ import { TokenService } from './services/TokenService';
 import { PasswordService } from './services/PasswordService';
 import { VerifyClientSecretProvider } from './providers/VerifyClientSecretProvider';
 import { BearerTokenVerifyProvider } from './providers/BearerTokenVerifyProvider';
+import { AuthorizationBindings, AuthorizationComponent } from 'loopback4-authorization';
 
 export class Lb4AuthenticationApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -52,8 +53,13 @@ export class Lb4AuthenticationApplication extends BootMixin(
       path: '/explorer',
     });
     this.component(RestExplorerComponent);
-
+    
+    this.bind(AuthorizationBindings.CONFIG).to({
+      allowAlwaysPaths: ['/explorer'],
+    });
+    
     this.setupApplicationDependencies();
+    
 
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
@@ -92,6 +98,7 @@ export class Lb4AuthenticationApplication extends BootMixin(
 
     this.component(LoggerComponent);
     this.component(AuthenticationComponent);
+    this.component(AuthorizationComponent);
 
     this.bind(BcryptBinders.SALT_ROUNDS).to(10).inScope(BindingScope.SINGLETON);
 

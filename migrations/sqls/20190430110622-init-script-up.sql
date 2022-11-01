@@ -28,7 +28,10 @@ CREATE TABLE public.role (
     id integer NOT NULL,
     name text NOT NULL,
     key text NOT NULL,
-    permissions text
+    permissions text,
+    deleted boolean,
+    deleted_on timestamp with time zone,
+    deleted_by text
 );
 
 
@@ -75,7 +78,11 @@ CREATE TABLE public."user" (
     redirecturl text,
     username text NOT NULL,
     password text NOT NULL,
-    roleid integer
+    roleid integer,
+    permissions text,
+    deleted boolean,
+    deleted_on timestamp with time zone,
+    deleted_by text
 );
 
 
@@ -121,10 +128,10 @@ ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_
 -- Data for Name: role; Type: TABLE DATA; Schema: public; Owner: harshad.kadam
 --
 
-COPY public.role (id, name, key, permissions) FROM stdin;
-1	Admin	Admin	["CreateUser","UpdateUser","GetUser"]
-2	Admin	Super Admin	["CreateUser","UpdateUser","GetUser","DeleteUser","GetRole","CreateRole","DeleteRole","UpdateRole"]
-3	Subscriber	Subscriber	["GetUser"]
+COPY public.role (id, name, key, permissions, deleted, deleted_on, deleted_by) FROM stdin;
+1	Admin	Admin	["CreateUser","UpdateUser","GetUser"]	f	\N	\N
+2	Admin	Super Admin	["CreateUser","UpdateUser","GetUser","DeleteUser","GetRole","CreateRole","DeleteRole","UpdateRole"]	f	\N	\N
+3	Subscriber	Subscriber	["GetUser"]	f	\N	\N
 \.
 
 
@@ -132,8 +139,9 @@ COPY public.role (id, name, key, permissions) FROM stdin;
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: harshad.kadam
 --
 
-COPY public."user" (id, firstname, middlename, lastname, email, address, phonenumber, createdon, modifiedon, clientid, clientsecret, redirecturl, username, password, roleid) FROM stdin;
-1	Super		Admin	super.admin@sourcefuse.com	MH,IND	1234567890	2022-10-31 20:16:47.224+05:30	\N	superadmin	clientSecret	\N	superadmin	$2b$10$BS2EmfGdCJjfh74dAoU.mOf8dSZKA.RchidYunyF/q7MRyFwhagqu	2
+COPY public."user" (id, firstname, middlename, lastname, email, address, phonenumber, createdon, modifiedon, clientid, clientsecret, redirecturl, username, password, roleid, permissions, deleted, deleted_on, deleted_by) FROM stdin;
+1	Super		Admin	super.admin@sourcefuse.com	MH,IND	1234567890	2022-10-31 20:16:47.224+05:30	\N	superadmin	clientSecret	\N	superadmin	$2b$10$BS2EmfGdCJjfh74dAoU.mOf8dSZKA.RchidYunyF/q7MRyFwhagqu	2	\N	f	\N	\N
+2	Normal		Subscribere	subscriber@sourcefuse.com	MH,IND	1234567890	2022-11-01 17:26:49.407+05:30	\N	subscriber	subscriber	\N	subscriber	$2b$10$exAukOOsW508Gj8IsRaKIeoBoetDSVltELWjHzU1qvhX9TL7locRu	3	\N	f	\N  \N
 \.
 
 
@@ -148,7 +156,7 @@ SELECT pg_catalog.setval('public.role_id_seq', 3, true);
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: harshad.kadam
 --
 
-SELECT pg_catalog.setval('public.user_id_seq', 1, true);
+SELECT pg_catalog.setval('public.user_id_seq', 2, true);
 
 
 --

@@ -1,6 +1,6 @@
 import { inject } from '@loopback/core';
 import { response, post, HttpErrors, requestBody, } from '@loopback/rest';
-import { authenticateClient, AuthenticationBindings, AuthErrorKeys, Strategies, STRATEGY } from 'loopback4-authentication';
+import { authenticate, authenticateClient, AuthenticationBindings, AuthErrorKeys, Strategies, STRATEGY } from 'loopback4-authentication';
 import { ServicesBinders } from '../keys';
 import { User } from '../models';
 import { TokenService } from '../services/TokenService';
@@ -57,7 +57,7 @@ export class AuthController {
         };
     }
 
-    @authenticateClient(STRATEGY.LOCAL)
+    @authenticate(STRATEGY.LOCAL)
     @post('/auth/user/login')
     @response(200, {
         description: 'Ping Response',

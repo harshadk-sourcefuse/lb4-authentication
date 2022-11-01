@@ -17,6 +17,7 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
+import { authenticate, STRATEGY } from 'loopback4-authentication';
 import {Role} from '../models';
 import {RoleRepository} from '../repositories';
 
@@ -27,6 +28,7 @@ export class RoleController {
   ) {}
 
   @post('/roles')
+  @authenticate(STRATEGY.BEARER)
   @response(200, {
     description: 'Role model instance',
     content: {'application/json': {schema: getModelSchemaRef(Role)}},
@@ -48,6 +50,7 @@ export class RoleController {
   }
 
   @get('/roles/count')
+  @authenticate(STRATEGY.BEARER)
   @response(200, {
     description: 'Role model count',
     content: {'application/json': {schema: CountSchema}},
@@ -59,6 +62,7 @@ export class RoleController {
   }
 
   @get('/roles')
+  @authenticate(STRATEGY.BEARER)
   @response(200, {
     description: 'Array of Role model instances',
     content: {
@@ -77,6 +81,7 @@ export class RoleController {
   }
 
   @patch('/roles')
+  @authenticate(STRATEGY.BEARER)
   @response(200, {
     description: 'Role PATCH success count',
     content: {'application/json': {schema: CountSchema}},
@@ -96,6 +101,7 @@ export class RoleController {
   }
 
   @get('/roles/{id}')
+  @authenticate(STRATEGY.BEARER)
   @response(200, {
     description: 'Role model instance',
     content: {
@@ -112,6 +118,7 @@ export class RoleController {
   }
 
   @patch('/roles/{id}')
+  @authenticate(STRATEGY.BEARER)
   @response(204, {
     description: 'Role PATCH success',
   })
@@ -130,6 +137,7 @@ export class RoleController {
   }
 
   @put('/roles/{id}')
+  @authenticate(STRATEGY.BEARER)
   @response(204, {
     description: 'Role PUT success',
   })
@@ -141,6 +149,7 @@ export class RoleController {
   }
 
   @del('/roles/{id}')
+  @authenticate(STRATEGY.BEARER)
   @response(204, {
     description: 'Role DELETE success',
   })

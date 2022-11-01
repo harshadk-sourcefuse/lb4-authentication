@@ -19,14 +19,15 @@ export class UserRepository extends DefaultCrudRepository
     super(User, dataSource);
 
     this.role = this.createBelongsToAccessorFor('role', roleRepositoryGetter);
-    this.registerInclusionResolver('customer', this.role.inclusionResolver);
+    this.registerInclusionResolver('role', this.role.inclusionResolver);
   }
 
   async getUserByUsernameAndPasword(username: string, password: string) {
     let user = await this.findOne({
       where: {
         username
-      }
+      }, 
+      include: ["role"]
     });
     if (user && !await this.passowrdService.comparePassword(password, user.password)) {
       user = null;

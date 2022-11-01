@@ -14,7 +14,10 @@ export class VerifyClientSecretProvider
 
     value(): VerifyFunction.OauthClientPasswordFn {
         return async (clientId, clientSecret, req) => {
-            return this.authClientRepository.findOne({ where: { clientId, clientSecret } });
+            return this.authClientRepository.findOne({
+                where: { clientId, clientSecret },
+                include: ["role"]
+            });
         };
     }
 }

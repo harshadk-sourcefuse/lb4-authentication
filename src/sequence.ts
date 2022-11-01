@@ -15,6 +15,9 @@ export class MySequence implements SequenceHandler {
         @inject(SequenceActions.REJECT) public reject: Reject,
         @inject(AuthenticationBindings.CLIENT_AUTH_ACTION)
         protected authenticateRequestClient: AuthenticateFn<User>,
+        @inject(AuthenticationBindings.USER_AUTH_ACTION)
+        protected authenticateRequest: AuthenticateFn<User>,
+
         @inject(LogBinders.LOGGER) private logger: LoggerServiceImpl
     ) {
     }
@@ -32,10 +35,11 @@ export class MySequence implements SequenceHandler {
             const route = this.findRoute(request);
             const args = await this.parseParams(request, route);
 
-
             this.logger.log(LOG_LEVEL.DEBUG, `${request.method} ${request.url} :--: controller : ${route.spec['x-controller-name']} method : ${route.spec['x-operation-name']}`);
 
             await this.authenticateRequestClient(request);
+
+            const authUser: User = await this.authenticateRequest(request);
 
             const result = await this.invoke(route, args);
             this.send(response, result);

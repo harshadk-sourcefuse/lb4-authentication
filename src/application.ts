@@ -22,6 +22,7 @@ import { VerifyUserPasswordProvider } from './providers/VerifyUserPasswordProvid
 import { TokenService } from './services/TokenService';
 import { PasswordService } from './services/PasswordService';
 import { VerifyClientSecretProvider } from './providers/VerifyClientSecretProvider';
+import { BearerTokenVerifyProvider } from './providers/BearerTokenVerifyProvider';
 
 export class Lb4AuthenticationApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -64,6 +65,27 @@ export class Lb4AuthenticationApplication extends BootMixin(
         nested: true,
       },
     };
+    this.api({
+      components: {
+        securitySchemes: {
+          "HTTPBearer": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+          }
+        }
+      },
+      openapi: '3.0.0',
+      info: {
+        title: 'lb4-authentication-example',
+        version: '1.0.0',
+      },
+      security: [{
+        "HTTPBearer": []
+      }],
+      paths: {},
+      servers: [{ url: '/' }],
+    })
   }
 
   setupApplicationDependencies() {
@@ -80,6 +102,7 @@ export class Lb4AuthenticationApplication extends BootMixin(
 
     this.bind(Strategies.Passport.OAUTH2_CLIENT_PASSWORD_VERIFIER).toProvider(VerifyClientSecretProvider);
     this.bind(Strategies.Passport.LOCAL_PASSWORD_VERIFIER).toProvider(VerifyUserPasswordProvider);
+    this.bind(Strategies.Passport.BEARER_TOKEN_VERIFIER).toProvider(BearerTokenVerifyProvider);
 
   }
 }

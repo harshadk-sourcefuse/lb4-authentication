@@ -18,6 +18,7 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
+import { authenticate, STRATEGY } from 'loopback4-authentication';
 import { ServicesBinders } from '../keys';
 import { User } from '../models';
 import { UserRepository } from '../repositories';
@@ -31,6 +32,7 @@ export class UserController {
   ) { }
 
   @post('/users')
+  @authenticate(STRATEGY.BEARER)
   @response(200, {
     description: 'User model instance',
     content: { 'application/json': { schema: getModelSchemaRef(User) } },
@@ -53,6 +55,7 @@ export class UserController {
   }
 
   @get('/users/count')
+  @authenticate(STRATEGY.BEARER)
   @response(200, {
     description: 'User model count',
     content: { 'application/json': { schema: CountSchema } },
@@ -64,6 +67,7 @@ export class UserController {
   }
 
   @get('/users')
+  @authenticate(STRATEGY.BEARER)
   @response(200, {
     description: 'Array of User model instances',
     content: {
@@ -82,6 +86,7 @@ export class UserController {
   }
 
   @patch('/users')
+  @authenticate(STRATEGY.BEARER)
   @response(200, {
     description: 'User PATCH success count',
     content: { 'application/json': { schema: CountSchema } },
@@ -101,6 +106,7 @@ export class UserController {
   }
 
   @get('/users/{id}')
+  @authenticate(STRATEGY.BEARER)
   @response(200, {
     description: 'User model instance',
     content: {
@@ -117,6 +123,7 @@ export class UserController {
   }
 
   @patch('/users/{id}')
+  @authenticate(STRATEGY.BEARER)
   @response(204, {
     description: 'User PATCH success',
   })
@@ -135,6 +142,7 @@ export class UserController {
   }
 
   @put('/users/{id}')
+  @authenticate(STRATEGY.BEARER)
   @response(204, {
     description: 'User PUT success',
   })
@@ -146,6 +154,7 @@ export class UserController {
   }
 
   @del('/users/{id}')
+  @authenticate(STRATEGY.BEARER)
   @response(204, {
     description: 'User DELETE success',
   })

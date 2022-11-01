@@ -55,7 +55,7 @@ export class User extends Entity implements IAuthClient, IAuthUser {
   })
   modifiedOn?: string;
 
-  @belongsTo(() => Role, { keyTo: 'id' })
+  @belongsTo(() => Role, { name: 'role', keyTo: 'id' })
   roleId: number;
 
   @property({

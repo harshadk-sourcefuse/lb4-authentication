@@ -1,9 +1,10 @@
 import { inject } from '@loopback/core';
-import { FindRoute, InvokeMethod, ParseParams, Reject, RequestContext, Send, SequenceActions, SequenceHandler } from '@loopback/rest';
+import { FindRoute, HttpErrors, InvokeMethod, ParseParams, Reject, RequestContext, Send, SequenceActions, SequenceHandler } from '@loopback/rest';
 import { AuthenticationBindings, AuthenticateFn } from 'loopback4-authentication';
+import { AuthorizationBindings, AuthorizeFn, UserPermissionsFn, AuthorizeErrorKeys } from 'loopback4-authorization';
 import { LoggerServiceImpl } from './components/logger/logger.service';
 import { LogBinders, LOG_LEVEL } from './keys';
-import { User } from './models';
+import { User, UserWithRelations } from './models';
 
 export class MySequence implements SequenceHandler {
 
@@ -17,7 +18,10 @@ export class MySequence implements SequenceHandler {
         protected authenticateRequestClient: AuthenticateFn<User>,
         @inject(AuthenticationBindings.USER_AUTH_ACTION)
         protected authenticateRequest: AuthenticateFn<User>,
-
+        @inject(AuthorizationBindings.AUTHORIZE_ACTION)
+        protected checkAuthorisation: AuthorizeFn,
+        @inject(AuthorizationBindings.USER_PERMISSIONS)
+        private readonly getUserPermissions: UserPermissionsFn<string>,
         @inject(LogBinders.LOGGER) private logger: LoggerServiceImpl
     ) {
     }
@@ -39,7 +43,21 @@ export class MySequence implements SequenceHandler {
 
             await this.authenticateRequestClient(request);
 
-            const authUser: User = await this.authenticateRequest(request);
+            const authUser: UserWithRelations = await this.authenticateRequest(request);
+
+            const permissions = this.getUserPermissions(
+                authUser?.permissions || [],
+                authUser?.role?.permissions || [],
+            );
+            
+            const isAccessAllowed: boolean = await this.checkAuthorisation(
+                permissions,
+                request,
+            );
+            
+            if (!isAccessAllowed) {
+                throw new HttpErrors.Forbidden(AuthorizeErrorKeys.NotAllowedAccess);
+            }
 
             const result = await this.invoke(route, args);
             this.send(response, result);

@@ -1,9 +1,12 @@
-import { belongsTo, Entity, hasOne, model, property } from '@loopback/repository';
+import { belongsTo, model, property } from '@loopback/repository';
 import { IAuthClient, IAuthUser } from 'loopback4-authentication';
-import { Role, RoleEnum, RoleWithRelations } from './role.model';
+import { UserPermission, UserPermissionsOverride } from 'loopback4-authorization';
+import { SoftDeleteEntity } from 'loopback4-soft-delete';
+import { Permission } from './permissions.enum';
+import { Role, RoleWithRelations } from './role.model';
 
 @model()
-export class User extends Entity implements IAuthClient, IAuthUser {
+export class User extends SoftDeleteEntity implements IAuthClient, IAuthUser, UserPermissionsOverride<string> {
   @property({
     type: 'number',
     id: true,
@@ -77,9 +80,17 @@ export class User extends Entity implements IAuthClient, IAuthUser {
   })
   redirectUrl?: string | undefined;
 
-  constructor(data?: Partial<User>) {
-    super(data);
-  }
+  @property({
+    type: 'array',
+    itemType: 'string',
+    jsonSchema: {
+      type: "array",
+      items: {
+        enum: Object.values(Permission),
+      }
+    },
+  })
+  permissions: UserPermission<Permission>[];
 
   @property({
     type: 'string',
@@ -93,6 +104,10 @@ export class User extends Entity implements IAuthClient, IAuthUser {
     required: true
   })
   password: string;
+
+  constructor(data?: Partial<User>) {
+    super(data);
+  }
 }
 
 export interface UserRelations {

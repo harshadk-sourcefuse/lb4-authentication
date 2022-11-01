@@ -60,6 +60,8 @@
     "loopback-connector-kv-redis": "^3.0.3",
     "loopback-connector-postgresql": "^5.5.2",
     "loopback4-authentication": "^7.1.1",
+    "loopback4-authorization": "^5.0.8",
+    "loopback4-soft-delete": "^5.3.5",
     "tslib": "^2.0.0",
     "winston": "^3.8.2"
   },

@@ -19,8 +19,9 @@ import {
   response,
 } from '@loopback/rest';
 import { authenticate, STRATEGY } from 'loopback4-authentication';
+import { authorize } from 'loopback4-authorization';
 import { ServicesBinders } from '../keys';
-import { User } from '../models';
+import { Permission, User } from '../models';
 import { UserRepository } from '../repositories';
 import { PasswordServiceInterface } from '../types';
 
@@ -31,8 +32,9 @@ export class UserController {
     @inject(ServicesBinders.PASSWORD_SERVICE) private passowrdService: PasswordServiceInterface,
   ) { }
 
-  @post('/users')
+  @authorize({ permissions: [Permission.CREATE_USER] })
   @authenticate(STRATEGY.BEARER)
+  @post('/users')
   @response(200, {
     description: 'User model instance',
     content: { 'application/json': { schema: getModelSchemaRef(User) } },
@@ -54,8 +56,9 @@ export class UserController {
     return this.userRepository.create(user);
   }
 
-  @get('/users/count')
+  @authorize({ permissions: [Permission.GET_USER] })
   @authenticate(STRATEGY.BEARER)
+  @get('/users/count')
   @response(200, {
     description: 'User model count',
     content: { 'application/json': { schema: CountSchema } },
@@ -66,8 +69,9 @@ export class UserController {
     return this.userRepository.count(where);
   }
 
-  @get('/users')
+  @authorize({ permissions: [Permission.GET_USER] })
   @authenticate(STRATEGY.BEARER)
+  @get('/users')
   @response(200, {
     description: 'Array of User model instances',
     content: {
@@ -85,8 +89,9 @@ export class UserController {
     return this.userRepository.find(filter);
   }
 
-  @patch('/users')
+  @authorize({ permissions: [Permission.UPDATE_USER] })
   @authenticate(STRATEGY.BEARER)
+  @patch('/users')
   @response(200, {
     description: 'User PATCH success count',
     content: { 'application/json': { schema: CountSchema } },
@@ -105,8 +110,9 @@ export class UserController {
     return this.userRepository.updateAll(user, where);
   }
 
-  @get('/users/{id}')
+  @authorize({ permissions: [Permission.GET_USER] })
   @authenticate(STRATEGY.BEARER)
+  @get('/users/{id}')
   @response(200, {
     description: 'User model instance',
     content: {
@@ -122,8 +128,9 @@ export class UserController {
     return this.userRepository.findById(id, filter);
   }
 
-  @patch('/users/{id}')
+  @authorize({ permissions: [Permission.UPDATE_USER] })
   @authenticate(STRATEGY.BEARER)
+  @patch('/users/{id}')
   @response(204, {
     description: 'User PATCH success',
   })
@@ -141,8 +148,9 @@ export class UserController {
     await this.userRepository.updateById(id, user);
   }
 
-  @put('/users/{id}')
+  @authorize({ permissions: [Permission.UPDATE_USER] })
   @authenticate(STRATEGY.BEARER)
+  @put('/users/{id}')
   @response(204, {
     description: 'User PUT success',
   })
@@ -153,8 +161,9 @@ export class UserController {
     await this.userRepository.replaceById(id, user);
   }
 
-  @del('/users/{id}')
+  @authorize({ permissions: [Permission.DELETE_USER] })
   @authenticate(STRATEGY.BEARER)
+  @del('/users/{id}')
   @response(204, {
     description: 'User DELETE success',
   })

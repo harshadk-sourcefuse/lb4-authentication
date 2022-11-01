@@ -1,4 +1,7 @@
-import { Entity, model, property } from '@loopback/repository';
+import { model, property } from '@loopback/repository';
+import { Permissions } from 'loopback4-authorization';
+import { SoftDeleteEntity } from 'loopback4-soft-delete';
+import { Permission } from './permissions.enum';
 
 export enum RoleEnum {
   ADMIN = 'Admin',
@@ -7,7 +10,7 @@ export enum RoleEnum {
 };
 
 @model()
-export class Role extends Entity {
+export class Role extends SoftDeleteEntity implements Permissions<string>  {
 
   @property({
     type: 'number',
@@ -34,8 +37,14 @@ export class Role extends Entity {
   @property({
     type: 'array',
     itemType: 'string',
+    jsonSchema: {
+      type: "array",
+      items: {
+        enum: Object.values(Permission),
+      }
+    },
   })
-  permissions: string[];
+  permissions: Permission[];
 
   constructor(data?: Partial<Role>) {
     super(data);
